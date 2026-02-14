@@ -26,10 +26,12 @@ app.include_router(data.router, prefix="/api", tags=["data"])
 # This might need adjustment depending on how you want to serve the app.
 # For now, we mount specific directories and a catch-all for root files.
 
-app.mount("/src", StaticFiles(directory="src"), name="src")
-app.mount("/pages", StaticFiles(directory="pages"), name="pages")
-app.mount("/img", StaticFiles(directory="img"), name="img")
-app.mount("/docs", StaticFiles(directory="docs"), name="docs")
+# Serve Static Files (Frontend) - Only if they exist
+static_dirs = ["src", "pages", "img", "docs"]
+for dir_name in static_dirs:
+    dir_path = os.path.join(os.getcwd(), dir_name)
+    if os.path.exists(dir_path) and os.path.isdir(dir_path):
+        app.mount(f"/{dir_name}", StaticFiles(directory=dir_name), name=dir_name)
 
 from fastapi.responses import FileResponse
 
